@@ -1,0 +1,46 @@
+{
+  "name": "siyuan-plugin-doc-favorites",
+  "author": "ttChen",
+  "url": "https://github.com/taotaochen86/siyuan-plugin-doc-favorites",
+  "version": "0.2.6",
+  "minAppVersion": "3.1.0",
+  "backends": [
+    "windows",
+    "linux",
+    "darwin"
+  ],
+  "frontends": [
+    "desktop",
+    "desktop-window"
+  ],
+  "displayName": {
+    "default": "Doc Favorites",
+    "zh_CN": "文档收藏夹"
+  },
+  "description": {
+    "default": "Star documents from the document-tree context menu, then press Ctrl twice inside SiYuan to open a small window with two tabs: Create Today's Daily Note (one click on a notebook creates today's note at that notebook's own daily-note path and opens it) and Favorites (list every starred document, click to open, remove on the spot). Favorites are stored as block attributes, so the original document never moves, gets renamed or changes a single character.",
+    "zh_CN": "在文档树右键即可给文档打星标收藏；在思源里快速按两下 Ctrl 弹出小窗口，两个 tab：「建日记」（点一个笔记本，就按它自己的日记路径建今天的文档并立即打开）和「收藏」（列出全部收藏，点行打开、行尾当场取消收藏）。收藏只写块属性，原文档的位置、标题、正文一个字都不动。"
+  },
+  "readme": {
+    "default": "README.md",
+    "zh_CN": "README.md"
+  },
+  "funding": {
+    "custom": []
+  },
+  "keywords": [
+    "收藏",
+    "收藏夹",
+    "星标",
+    "常用文档",
+    "快速访问",
+    "日记",
+    "新建日记",
+    "favorites",
+    "favourite",
+    "bookmark",
+    "star",
+    "daily note",
+    "diary"
+  ]
+}
