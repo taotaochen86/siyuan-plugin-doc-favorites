@@ -141,6 +141,8 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     this.diaryCreating = false;
     this.injectGlobalStyle();
     window.addEventListener("keydown", this.onKeyDown, true);
+    /* 插件重载（不一定走 onLayoutReady）时也刷新一次，顺带完成旧属性迁移 */
+    setTimeout(() => this.refreshFavs(true), 600);
   }
   injectGlobalStyle() {
     if (document.getElementById("df-global-style")) return;
@@ -256,6 +258,25 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     const p = (n) => String(n).padStart(2, "0");
     return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
   }
+  /* custom-fav 的值：新格式是 JSON {"at","order"}；旧格式是纯数字时间戳 */
+  parseFav(raw, oldOrder) {
+    const s = String(raw || "").trim();
+    if (!s) return null;
+    if (s.charAt(0) === "{") {
+      try {
+        const o = JSON.parse(s);
+        if (o && typeof o === "object") {
+          const order = Number(o.order);
+          return { at: String(o.at || "0"), order: Number.isFinite(order) ? order : 0, legacy: false };
+        }
+      } catch (e) { /* 不是合法 JSON，按旧格式处理 */ }
+    }
+    const order = Number.isFinite(Number(oldOrder)) ? Number(oldOrder) : 0;
+    return { at: s, order, legacy: true };
+  }
+  favValue(at, order) {
+    return JSON.stringify({ at: String(at), order: Number(order) || 0 });
+  }
   items() {
     return Array.from(this.favs.values()).sort((a, b) => {
       if (a.order !== b.order) return a.order - b.order;
@@ -284,12 +305,25 @@ module.exports = class DocFavoritesPlugin extends Plugin {
         return;
       }
       const live = {};
+      const legacyFix = [];
       const attrsRes = await fetchSyncPost("/api/attr/batchGetBlockAttrs", { ids });
       const rawAttrs = attrsRes && attrsRes.data || {};
       Object.keys(rawAttrs).forEach((id) => {
         const a = rawAttrs[id] || {};
-        if (a[ATTR_FAV]) live[id] = { at: String(a[ATTR_FAV]), order: Number(a[ATTR_ORDER]), title: a.title || "" };
+        const p = this.parseFav(a[ATTR_FAV], a[ATTR_ORDER]);
+        if (!p) return;
+        live[id] = { at: p.at, order: p.order, title: a.title || "" };
+        if (p.legacy) legacyFix.push({ id, at: p.at, order: p.order });
       });
+      /* 旧的双属性（custom-fav + custom-fav-order）合并进一个 JSON，顺手清掉旧属性 */
+      for (const it of legacyFix) {
+        try {
+          await fetchSyncPost("/api/attr/setBlockAttrs", {
+            id: it.id,
+            attrs: { [ATTR_FAV]: this.favValue(it.at, it.order), [ATTR_ORDER]: "" }
+          });
+        } catch (e) { /* 单条迁移失败不影响整体 */ }
+      }
       const atMap = {};
       const orders = {};
       Object.keys(live).forEach((id) => {
@@ -470,7 +504,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       try {
         await fetchSyncPost("/api/attr/setBlockAttrs", {
           id,
-          attrs: { [ATTR_FAV]: this.stamp(), [ATTR_ORDER]: String(min - 1 - i) }
+          attrs: { [ATTR_FAV]: this.favValue(this.stamp(), min - 1 - i) }
         });
         added++;
       } catch (e) {
@@ -483,12 +517,13 @@ module.exports = class DocFavoritesPlugin extends Plugin {
         const attrs = r && r.data || {};
         Object.keys(attrs).forEach((id) => {
           const a = attrs[id] || {};
-          if (!a[ATTR_FAV]) return;
+          const p = this.parseFav(a[ATTR_FAV], a[ATTR_ORDER]);
+          if (!p) return;
           const old = this.favs.get(id) || {};
           this.favs.set(id, {
             id,
-            at: String(a[ATTR_FAV]),
-            order: Number.isFinite(Number(a[ATTR_ORDER])) ? Number(a[ATTR_ORDER]) : 0,
+            at: p.at,
+            order: p.order,
             title: a.title || old.title || "\u672A\u547D\u540D\u6587\u6863",
             hpath: old.hpath || "",
             box: old.box || "",
@@ -530,7 +565,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
         if (list[i].order !== i) {
           await fetchSyncPost("/api/attr/setBlockAttrs", {
             id: list[i].id,
-            attrs: { [ATTR_ORDER]: String(i) }
+            attrs: { [ATTR_FAV]: this.favValue(list[i].at, i) }
           });
         }
       }
@@ -554,9 +589,10 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       return;
     }
     for (const [bid, ord] of pairs) {
+      const it = this.favs.get(bid) || {};
       await fetchSyncPost("/api/attr/setBlockAttrs", {
         id: bid,
-        attrs: { [ATTR_ORDER]: String(ord) }
+        attrs: { [ATTR_FAV]: this.favValue(it.at || "0", ord) }
       });
     }
     await this.refreshFavs();
