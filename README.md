@@ -1,4 +1,4 @@
-# 文档收藏夹（siyuan-plugin-doc-favorites）v0.2.7
+# 文档收藏夹（siyuan-plugin-doc-favorites）v0.2.8
 
 **简体中文** | [English](#english)
 
@@ -172,7 +172,7 @@ node --check index.js        # 语法自查
 - 仓库根目录就是插件包，`index.js` 是思源加载的入口
 - `package.zip` 里的文件必须在 zip 根层，套一层同名目录会导致集市安装后不加载
 - 版本号四处一致：`plugin.json` 的 `version`、`package.json` 的 `version`、README 标题、Release 的 tag
-- 发布：Release 的 tag 写 `v0.2.7`，附件放 `package.zip`
+- 发布：Release 的 tag 写 `v0.2.8`，附件放 `package.zip`
 - 上架：集市仓库 `siyuan-note/bazaar` 的 `plugins.txt` 加一行 `taotaochen86/siyuan-plugin-doc-favorites`，提 PR 合并后由 Action 自动生成索引；之后日常发版不用再提 PR
 
 ## 10 许可
@@ -183,6 +183,7 @@ MIT License © 2026 ttChen
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.8 | 补上 MIT `LICENSE` 文件（集市自动检查要求仓库根有许可证） |
 | 0.2.7 | 收藏属性合并成一个 `custom-fav` JSON；旧的两个属性在加载时自动迁移并清掉 |
 | 0.2.6 | 建日记页不再依赖固定笔记本：未配置列全部已打开库，配置的库在本机不存在时给提示 |
 | 0.2.5 | 去掉左侧收藏面板，只留双击 Ctrl 窗口；收藏页行尾可就地取消收藏 |
@@ -197,7 +198,7 @@ MIT License © 2026 ttChen
 
 ## English
 
-# Doc Favorites (siyuan-plugin-doc-favorites) v0.2.7
+# Doc Favorites (siyuan-plugin-doc-favorites) v0.2.8
 
 **English** | [简体中文](#文档收藏夹siyuan-plugin-doc-favoritesv027)
 
@@ -380,6 +381,7 @@ MIT License © 2026 ttChen
 
 | Version | Changes |
 |---|---|
+| 0.2.8 | Added the MIT `LICENSE` file at the repository root (required by the marketplace check) |
 | 0.2.7 | Favorites collapse into a single `custom-fav` JSON; the two old attributes migrate automatically on load and are cleared |
 | 0.2.6 | Create tab no longer depends on hard-coded notebooks: all open notebooks are listed when unconfigured, and a hint appears when configured notebooks are missing |
 | 0.2.5 | Left-dock favorites panel removed; Ctrl-twice window only. Favorites rows can be unstarred in place |

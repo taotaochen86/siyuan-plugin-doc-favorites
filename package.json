@@ -1,6 +1,6 @@
 {
   "name": "siyuan-plugin-doc-favorites",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "SiYuan plugin: star documents from the document tree, press Ctrl twice to create today's daily note or open favorites.",
   "author": "ttChen",
   "license": "MIT",
