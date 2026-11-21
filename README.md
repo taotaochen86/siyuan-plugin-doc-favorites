@@ -1,4 +1,4 @@
-# 文档收藏夹（siyuan-plugin-doc-favorites）v0.2.10
+# 文档收藏夹（siyuan-plugin-doc-favorites）v0.2.11
 
 **简体中文** | [English](#english)
 
@@ -81,7 +81,7 @@
 
 ### 5.3 配置存在哪
 
-这份选择存在本机（`localStorage` 的 `df.diary.boxes`），不随思源同步，所以每台电脑各配一次。收藏数据本身走文档属性，是同步的。
+这份选择存在插件自己的数据文件里（`data/storage/petal/siyuan-plugin-doc-favorites/data.json`），重启思源、彻底退出再打开都记得住；但它不随思源同步，每台电脑各配一次。收藏数据本身走文档属性，是同步的。
 
 ### 5.4 收藏数据怎么存
 
@@ -174,7 +174,7 @@ node --check index.js        # 语法自查
 - 仓库根目录就是插件包，`index.js` 是思源加载的入口
 - `package.zip` 里的文件必须在 zip 根层，套一层同名目录会导致集市安装后不加载
 - 版本号四处一致：`plugin.json` 的 `version`、`package.json` 的 `version`、README 标题、Release 的 tag
-- 发布：Release 的 tag 写 `v0.2.10`，附件放 `package.zip`
+- 发布：Release 的 tag 写 `v0.2.11`，附件放 `package.zip`
 - 上架：集市仓库 `siyuan-note/bazaar` 的 `plugins.txt` 加一行 `taotaochen86/siyuan-plugin-doc-favorites`，提 PR 合并后由 Action 自动生成索引；之后日常发版不用再提 PR
 
 ## 10 许可
@@ -185,6 +185,7 @@ MIT License © 2026 ttChen
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.11 | 笔记本勾选改存插件自己的数据文件（`data/storage/petal/siyuan-plugin-doc-favorites/data.json`），不再依赖浏览器 `localStorage`；重启思源、彻底退出再打开都记得住 |
 | 0.2.10 | 建日记页的笔记本勾选改成即时保存：勾上、取消立刻写进配置，直接关窗也不丢，不再有「保存」按钮 |
 | 0.2.9 | 收藏页取消收藏加了一层保护：先点「编辑」进入编辑态，行尾才出现「取消收藏」；编辑态下点行不再跳转，避免误触 |
 | 0.2.8 | 补上 MIT `LICENSE` 文件（集市自动检查要求仓库根有许可证） |
@@ -202,7 +203,7 @@ MIT License © 2026 ttChen
 
 ## English
 
-# Doc Favorites (siyuan-plugin-doc-favorites) v0.2.10
+# Doc Favorites (siyuan-plugin-doc-favorites) v0.2.11
 
 **English** | [简体中文](#文档收藏夹siyuan-plugin-doc-favoritesv027)
 
@@ -283,7 +284,7 @@ You can skip this on day one: with no configuration, the list shows every open n
 
 ### 5.3 Where the setting lives
 
-This choice is stored locally (`localStorage`, key `df.diary.boxes`) and does **not** sync, so each computer keeps its own. Favorites themselves live in document attributes and do sync.
+This choice is stored in the plugin's own data file (`data/storage/petal/siyuan-plugin-doc-favorites/data.json`), so it survives a full SiYuan restart; it does **not** sync, so each computer keeps its own. Favorites themselves live in document attributes and do sync.
 
 ### 5.4 Where favorites are stored
 
@@ -376,7 +377,7 @@ node --check index.js        # syntax check
 - The repository root **is** the plugin package; `index.js` is the entry SiYuan loads
 - Files inside `package.zip` must sit at the zip root; an extra folder level makes the marketplace install load nothing
 - Keep the version identical in four places: `plugin.json` `version`, `package.json` `version`, the README title, and the Release tag
-- Releasing: tag the Release `v0.2.10` and attach `package.zip`
+- Releasing: tag the Release `v0.2.11` and attach `package.zip`
 - Listing: add one line `taotaochen86/siyuan-plugin-doc-favorites` to `plugins.txt` in `siyuan-note/bazaar` and open a PR; after it merges the Action rebuilds the index, and later releases need no new PR
 
 ## 10 License
@@ -387,6 +388,7 @@ MIT License © 2026 ttChen
 
 | Version | Changes |
 |---|---|
+| 0.2.11 | Notebook ticks are stored in the plugin's own data file (`data/storage/petal/siyuan-plugin-doc-favorites/data.json`) instead of browser `localStorage`, so the setting survives a full SiYuan restart |
 | 0.2.10 | Notebook ticks in the Create tab now save immediately: tick or untick writes the setting at once, so closing the window never loses it; the Save button is gone |
 | 0.2.9 | Unstarring in the Favorites tab is now protected: click `Edit` first and only then does every row show `Remove`; rows no longer open documents while in edit mode |
 | 0.2.8 | Added the MIT `LICENSE` file at the repository root (required by the marketplace check) |
