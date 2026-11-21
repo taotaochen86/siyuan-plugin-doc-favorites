@@ -798,7 +798,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       const empty = document.createElement("div");
       empty.className = "df-modal__desc";
       empty.style.whiteSpace = "pre-line";
-      empty.textContent = ids !== null && ids.length ? "\u6E05\u5355\u91CC\u7684\u7B14\u8BB0\u672C\u5728\u8FD9\u53F0\u7535\u8111\u4E0A\u4E0D\u5B58\u5728\uFF08\u591A\u534A\u662F\u4ECE\u522B\u7684\u7535\u8111\u540C\u6B65\u8FC7\u6765\u7684\u914D\u7F6E\uFF09\u3002\n\u70B9\u53F3\u4E0B\u89D2\u300C\u7F16\u8F91\u300D\u91CD\u65B0\u9009\u62E9\u5373\u53EF\u3002" : "\u8FD9\u53F0\u601D\u6E90\u8FD8\u6CA1\u6709\u6253\u5F00\u7684\u7B14\u8BB0\u672C\u3002\n\u5148\u5728\u601D\u6E90\u91CC\u65B0\u5EFA\u4E00\u4E2A\u7B14\u8BB0\u672C\uFF0C\u518D\u56DE\u6765\u8BD5\u3002";
+      empty.textContent = ids !== null && ids.length ? "\u6E05\u5355\u91CC\u7684\u7B14\u8BB0\u672C\u5728\u8FD9\u53F0\u7535\u8111\u4E0A\u4E0D\u5B58\u5728\uFF08\u591A\u534A\u662F\u4ECE\u522B\u7684\u7535\u8111\u540C\u6B65\u8FC7\u6765\u7684\u914D\u7F6E\uFF09\u3002\n\u70B9\u53F3\u4E0B\u89D2\u300C\u7F16\u8F91\u300D\u91CD\u65B0\u9009\u62E9\u5373\u53EF\u3002" : ids !== null ? "\u4F60\u8FD8\u6CA1\u6709\u52FE\u9009\u4EFB\u4F55\u7B14\u8BB0\u672C\u3002\n\u70B9\u53F3\u4E0B\u89D2\u300C\u7F16\u8F91\u300D\u52FE\u4E0A\u51E0\u4E2A\uFF0C\u52FE\u9009\u5373\u65F6\u751F\u6548\u3002" : "\u8FD9\u53F0\u601D\u6E90\u8FD8\u6CA1\u6709\u6253\u5F00\u7684\u7B14\u8BB0\u672C\u3002\n\u5148\u5728\u601D\u6E90\u91CC\u65B0\u5EFA\u4E00\u4E2A\u7B14\u8BB0\u672C\uFF0C\u518D\u56DE\u6765\u8BD5\u3002";
       list.appendChild(empty);
       return;
     }
@@ -935,7 +935,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     head.append(title, x);
     const desc = document.createElement("div");
     desc.className = "df-modal__desc";
-    desc.textContent = "\u52FE\u9009\u7684\u7B14\u8BB0\u672C\u4F1A\u51FA\u73B0\u5728\u300C\u5FEB\u901F\u5EFA\u65E5\u8BB0\u300D\u7A97\u53E3\u91CC\uFF1B\u53EA\u7559\u5E38\u7528\u7684\uFF0C\u7A97\u53E3\u66F4\u6E05\u723D\u3002";
+    desc.textContent = "\u52FE\u9009\u7684\u7B14\u8BB0\u672C\u4F1A\u51FA\u73B0\u5728\u300C\u5FEB\u901F\u5EFA\u65E5\u8BB0\u300D\u7A97\u53E3\u91CC\uFF0C\u52FE\u9009\u5373\u65F6\u751F\u6548\uFF1B\u53EA\u7559\u5E38\u7528\u7684\uFF0C\u7A97\u53E3\u66F4\u6E05\u723D\u3002";
     const list = document.createElement("div");
     list.className = "df-modal__list";
     const raw = this.loadDiaryBoxes();
@@ -956,6 +956,9 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       path.className = "df-nb__path";
       path.textContent = b.path;
       path.title = b.path;
+      ck.addEventListener("change", () => {
+        this.saveDiaryBoxes(cks.filter((c) => c.checked).map((c) => c.value));
+      });
       row.append(ck, name, path);
       cks.push(ck);
       list.appendChild(row);
@@ -964,20 +967,12 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     foot.className = "df-modal__foot";
     const tip = document.createElement("span");
     tip.className = "df-modal__tip";
-    tip.textContent = "\u4FDD\u5B58\u540E\u56DE\u5230\u5EFA\u65E5\u8BB0\u7A97\u53E3";
-    const back = document.createElement("button");
-    back.className = "df-btn";
-    back.textContent = "\u53D6\u6D88";
-    back.addEventListener("click", () => this.renderDiaryBody());
-    const save = document.createElement("button");
-    save.className = "df-btn df-btn--primary";
-    save.textContent = "\u4FDD\u5B58";
-    save.addEventListener("click", () => {
-      const ids = cks.filter((c) => c.checked).map((c) => c.value);
-      this.saveDiaryBoxes(ids);
-      this.renderDiaryBody();
-    });
-    foot.append(tip, back, save);
+    tip.textContent = "\u52FE\u9009\u5373\u65F6\u4FDD\u5B58\uFF0C\u4E0D\u7528\u518D\u70B9\u4FDD\u5B58\uFF1B\u70B9\u300C\u5B8C\u6210\u300D\u56DE\u5230\u5EFA\u65E5\u8BB0\u7A97\u53E3";
+    const done = document.createElement("button");
+    done.className = "df-btn df-btn--primary";
+    done.textContent = "\u5B8C\u6210";
+    done.addEventListener("click", () => this.renderDiaryBody());
+    foot.append(tip, done);
     box.append(head, desc, list, foot);
   }
 };

@@ -1,4 +1,4 @@
-# 文档收藏夹（siyuan-plugin-doc-favorites）v0.2.9
+# 文档收藏夹（siyuan-plugin-doc-favorites）v0.2.10
 
 **简体中文** | [English](#english)
 
@@ -17,7 +17,7 @@
 | 2.3 建日记 | 第一个 tab 列出你选定的笔记本，右侧写着今天会生成到哪。点任意一行，立刻按这个库自己的「新建日记」路径建今天的文档，建完直接打开；今天就有的，直接打开，不重复建 |
 | 2.4 收藏 tab | 全部收藏文档，一行一条：星标、标题、所属笔记本。点一行打开 |
 | 2.5 取消收藏要两步 | 收藏页右下角点「编辑」进入编辑态，行尾才出现「取消收藏」；点一下这条当场从列表消失，文档本身一个字不动。点「完成」退出编辑 |
-| 2.6 编辑显示范围 | 建日记页右下角「编辑」，勾选哪些笔记本出现在列表里。所有已打开的库都能勾 |
+| 2.6 编辑显示范围 | 建日记页右下角「编辑」，勾选哪些笔记本出现在列表里，勾选即时生效，不用再点保存。所有已打开的库都能勾 |
 | 2.7 换电脑不空白 | 新电脑第一次打开，列表直接列全部已打开的笔记本；从别处同步来的配置在本机找不到对应库时，给一句提示，让你点「编辑」重选 |
 
 **建日记页**
@@ -143,8 +143,8 @@
 ### 7.6 改列表里显示哪些笔记本
 
 1. 建日记 tab，点右下「编辑」
-2. 勾选或取消勾选
-3. 保存，列表随即刷新
+2. 勾选或取消勾选——勾上、取消都立刻写进配置，没有「保存」这一步
+3. 点「完成」回到建日记窗口，列表已经是新选的库；直接关窗同样生效
 
 ### 7.7 换一台电脑
 
@@ -174,7 +174,7 @@ node --check index.js        # 语法自查
 - 仓库根目录就是插件包，`index.js` 是思源加载的入口
 - `package.zip` 里的文件必须在 zip 根层，套一层同名目录会导致集市安装后不加载
 - 版本号四处一致：`plugin.json` 的 `version`、`package.json` 的 `version`、README 标题、Release 的 tag
-- 发布：Release 的 tag 写 `v0.2.9`，附件放 `package.zip`
+- 发布：Release 的 tag 写 `v0.2.10`，附件放 `package.zip`
 - 上架：集市仓库 `siyuan-note/bazaar` 的 `plugins.txt` 加一行 `taotaochen86/siyuan-plugin-doc-favorites`，提 PR 合并后由 Action 自动生成索引；之后日常发版不用再提 PR
 
 ## 10 许可
@@ -185,6 +185,7 @@ MIT License © 2026 ttChen
 
 | 版本 | 主要变化 |
 |---|---|
+| 0.2.10 | 建日记页的笔记本勾选改成即时保存：勾上、取消立刻写进配置，直接关窗也不丢，不再有「保存」按钮 |
 | 0.2.9 | 收藏页取消收藏加了一层保护：先点「编辑」进入编辑态，行尾才出现「取消收藏」；编辑态下点行不再跳转，避免误触 |
 | 0.2.8 | 补上 MIT `LICENSE` 文件（集市自动检查要求仓库根有许可证） |
 | 0.2.7 | 收藏属性合并成一个 `custom-fav` JSON；旧的两个属性在加载时自动迁移并清掉 |
@@ -201,7 +202,7 @@ MIT License © 2026 ttChen
 
 ## English
 
-# Doc Favorites (siyuan-plugin-doc-favorites) v0.2.9
+# Doc Favorites (siyuan-plugin-doc-favorites) v0.2.10
 
 **English** | [简体中文](#文档收藏夹siyuan-plugin-doc-favoritesv027)
 
@@ -218,7 +219,7 @@ Right-click a document to star it; after that, press Ctrl twice inside SiYuan to
 | 2.3 Create today's note | The first tab lists the notebooks you picked, with the path that will be created today. Click any row and the plugin creates today's note at **that notebook's own daily-note path**, then opens it. If today's note already exists, it just opens it — no duplicate |
 | 2.4 Favorites tab | Every starred document, one per row: star, title, notebook. Click a row to open it |
 | 2.5 Removing takes two steps | Click `Edit` at the bottom right of the Favorites tab first; only then does every row show `Remove`. Click it and the row leaves the list at once — the document itself is untouched. Click `Done` to leave edit mode |
-| 2.6 Choose the list | `Edit` at the bottom right of the Create tab: tick which notebooks appear. Every open notebook is available |
+| 2.6 Choose the list | `Edit` at the bottom right of the Create tab: tick which notebooks appear. Ticks take effect immediately — no Save step. Every open notebook is available |
 | 2.7 Never blank on another PC | On a fresh machine the list shows all open notebooks; if synced settings point at notebooks that do not exist here, you get a hint and can click `Edit` to pick again |
 
 **Create tab**
@@ -344,8 +345,8 @@ Right-click the starred document; the first menu item is now `★ Remove from fa
 ### 7.6 Change which notebooks are listed
 
 1. On the Create tab, click `Edit`
-2. Tick or untick notebooks
-3. Save and the list refreshes
+2. Tick or untick — every change is written straight away, there is no Save step
+3. Click `Done` to go back; the list already shows the new selection. Closing the window directly works the same
 
 ### 7.7 On another computer
 
@@ -375,7 +376,7 @@ node --check index.js        # syntax check
 - The repository root **is** the plugin package; `index.js` is the entry SiYuan loads
 - Files inside `package.zip` must sit at the zip root; an extra folder level makes the marketplace install load nothing
 - Keep the version identical in four places: `plugin.json` `version`, `package.json` `version`, the README title, and the Release tag
-- Releasing: tag the Release `v0.2.9` and attach `package.zip`
+- Releasing: tag the Release `v0.2.10` and attach `package.zip`
 - Listing: add one line `taotaochen86/siyuan-plugin-doc-favorites` to `plugins.txt` in `siyuan-note/bazaar` and open a PR; after it merges the Action rebuilds the index, and later releases need no new PR
 
 ## 10 License
@@ -386,6 +387,7 @@ MIT License © 2026 ttChen
 
 | Version | Changes |
 |---|---|
+| 0.2.10 | Notebook ticks in the Create tab now save immediately: tick or untick writes the setting at once, so closing the window never loses it; the Save button is gone |
 | 0.2.9 | Unstarring in the Favorites tab is now protected: click `Edit` first and only then does every row show `Remove`; rows no longer open documents while in edit mode |
 | 0.2.8 | Added the MIT `LICENSE` file at the repository root (required by the marketplace check) |
 | 0.2.7 | Favorites collapse into a single `custom-fav` JSON; the two old attributes migrate automatically on load and are cleared |
