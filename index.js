@@ -71,6 +71,8 @@ var CSS = `
 .df-fav__del{flex:none;border:1px solid var(--b3-border-color);background:transparent;color:var(--b3-theme-on-surface);font-size:11px;line-height:1;padding:4px 8px;border-radius:3px;cursor:pointer;opacity:.7;}
 .df-fav__del:hover{opacity:1;color:#d9480f;border-color:#d9480f;}
 .df-fav__del:disabled{opacity:.4;cursor:not-allowed;}
+.df-fav--edit{cursor:default;}
+.df-fav--edit:hover{background:transparent;}
 `;
 module.exports = class DocFavoritesPlugin extends Plugin {
   constructor() {
@@ -139,10 +141,9 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     this.lastCtrlAt = 0;
     this.diaryModal = null;
     this.diaryCreating = false;
+    this.favEdit = false;
     this.injectGlobalStyle();
     window.addEventListener("keydown", this.onKeyDown, true);
-    /* 插件重载（不一定走 onLayoutReady）时也刷新一次，顺带完成旧属性迁移 */
-    setTimeout(() => this.refreshFavs(true), 600);
   }
   injectGlobalStyle() {
     if (document.getElementById("df-global-style")) return;
@@ -266,10 +267,11 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       try {
         const o = JSON.parse(s);
         if (o && typeof o === "object") {
-          const order = Number(o.order);
-          return { at: String(o.at || "0"), order: Number.isFinite(order) ? order : 0, legacy: false };
+          const order2 = Number(o.order);
+          return { at: String(o.at || "0"), order: Number.isFinite(order2) ? order2 : 0, legacy: false };
         }
-      } catch (e) { /* 不是合法 JSON，按旧格式处理 */ }
+      } catch (e) {
+      }
     }
     const order = Number.isFinite(Number(oldOrder)) ? Number(oldOrder) : 0;
     return { at: s, order, legacy: true };
@@ -315,14 +317,14 @@ module.exports = class DocFavoritesPlugin extends Plugin {
         live[id] = { at: p.at, order: p.order, title: a.title || "" };
         if (p.legacy) legacyFix.push({ id, at: p.at, order: p.order });
       });
-      /* 旧的双属性（custom-fav + custom-fav-order）合并进一个 JSON，顺手清掉旧属性 */
       for (const it of legacyFix) {
         try {
           await fetchSyncPost("/api/attr/setBlockAttrs", {
             id: it.id,
             attrs: { [ATTR_FAV]: this.favValue(it.at, it.order), [ATTR_ORDER]: "" }
           });
-        } catch (e) { /* 单条迁移失败不影响整体 */ }
+        } catch (e) {
+        }
       }
       const atMap = {};
       const orders = {};
@@ -616,6 +618,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     this.diaryModal = null;
     this.diaryDone = false;
     this.diaryCreating = false;
+    this.favEdit = false;
   }
   /* Go 时间格式 -> 今天的实际字符串（一次性替换，避免把年份里的 02 当成"日"） */
   goDateFormat(layout) {
@@ -694,6 +697,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     }
     this.diaryBoxesAll = boxes;
     this.diaryTab = "create";
+    this.favEdit = false;
     const mask = document.createElement("div");
     mask.className = "df-modal";
     const box = document.createElement("div");
@@ -724,6 +728,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       btn.addEventListener("click", () => {
         if (this.diaryTab === key) return;
         this.diaryTab = key;
+        this.favEdit = false;
         this.renderDiaryBody();
       });
       tabs.appendChild(btn);
@@ -735,7 +740,7 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     head.append(tabs, x);
     const desc = document.createElement("div");
     desc.className = "df-modal__desc";
-    desc.textContent = this.diaryTab === "create" ? "\u70B9\u4E0B\u9762\u4EFB\u4E00\u7B14\u8BB0\u672C\uFF0C\u7ACB\u5373\u6309\u5B83\u81EA\u5DF1\u7684\u300C\u65B0\u5EFA\u65E5\u8BB0\u300D\u8DEF\u5F84\u5EFA\u4ECA\u5929\u7684\u6587\u6863\u5E76\u8DF3\u8F6C\u8FC7\u53BB\uFF1B\u5DF2\u5B58\u5728\u5219\u76F4\u63A5\u6253\u5F00\u3002" : "\u8FD9\u91CC\u662F\u6536\u85CF\u5939\u91CC\u7684\u5168\u90E8\u6587\u6863\uFF0C\u70B9\u4E00\u884C\u76F4\u63A5\u6253\u5F00\u3002";
+    desc.textContent = this.diaryTab === "create" ? "\u70B9\u4E0B\u9762\u4EFB\u4E00\u7B14\u8BB0\u672C\uFF0C\u7ACB\u5373\u6309\u5B83\u81EA\u5DF1\u7684\u300C\u65B0\u5EFA\u65E5\u8BB0\u300D\u8DEF\u5F84\u5EFA\u4ECA\u5929\u7684\u6587\u6863\u5E76\u8DF3\u8F6C\u8FC7\u53BB\uFF1B\u5DF2\u5B58\u5728\u5219\u76F4\u63A5\u6253\u5F00\u3002" : this.favEdit ? "\u7F16\u8F91\u4E2D\uFF1A\u70B9\u884C\u5C3E\u300C\u53D6\u6D88\u6536\u85CF\u300D\u628A\u6587\u6863\u79FB\u51FA\u6536\u85CF\u5939\uFF08\u6587\u6863\u672C\u8EAB\u4E0D\u52A8\uFF09\uFF1B\u70B9\u53F3\u4E0B\u89D2\u300C\u5B8C\u6210\u300D\u9000\u51FA\u3002" : "\u8FD9\u91CC\u662F\u6536\u85CF\u5939\u91CC\u7684\u5168\u90E8\u6587\u6863\uFF0C\u70B9\u4E00\u884C\u76F4\u63A5\u6253\u5F00\uFF1B\u8981\u53D6\u6D88\u6536\u85CF\uFF0C\u5148\u70B9\u53F3\u4E0B\u89D2\u300C\u7F16\u8F91\u300D\u3002";
     const list = document.createElement("div");
     list.className = "df-modal__list";
     if (this.diaryTab === "create") {
@@ -754,6 +759,16 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       edit.className = "df-btn";
       edit.textContent = "\u7F16\u8F91";
       edit.addEventListener("click", () => this.renderDiaryEditor());
+      btns.push(edit);
+    } else {
+      const edit = document.createElement("button");
+      edit.className = "df-btn" + (this.favEdit ? " df-btn--primary" : "");
+      edit.textContent = this.favEdit ? "\u5B8C\u6210" : "\u7F16\u8F91";
+      edit.title = this.favEdit ? "\u9000\u51FA\u7F16\u8F91\uFF0C\u6062\u590D\u70B9\u884C\u6253\u5F00" : "\u8FDB\u5165\u7F16\u8F91\u540E\u624D\u4F1A\u51FA\u73B0\u300C\u53D6\u6D88\u6536\u85CF\u300D";
+      edit.addEventListener("click", () => {
+        this.favEdit = !this.favEdit;
+        this.renderDiaryBody();
+      });
       btns.push(edit);
     }
     const close = document.createElement("button");
@@ -818,8 +833,8 @@ module.exports = class DocFavoritesPlugin extends Plugin {
     }
     all.forEach((it) => {
       const row = document.createElement("div");
-      row.className = "df-fav";
-      row.title = (it.nbName ? it.nbName + " \xB7 " : "") + (it.hpath || "");
+      row.className = "df-fav" + (this.favEdit ? " df-fav--edit" : "");
+      row.title = this.favEdit ? "\u7F16\u8F91\u6001\u4E0B\u70B9\u884C\u4E0D\u4F1A\u6253\u5F00\u6587\u6863" : (it.nbName ? it.nbName + " \xB7 " : "") + (it.hpath || "");
       const star = document.createElement("span");
       star.className = "df-fav__star";
       star.textContent = "\u2605";
@@ -829,6 +844,15 @@ module.exports = class DocFavoritesPlugin extends Plugin {
       const nb = document.createElement("span");
       nb.className = "df-fav__nb";
       nb.textContent = it.nbName || "";
+      if (!this.favEdit) {
+        row.append(star, title, nb);
+        row.addEventListener("click", () => {
+          this.closeDiaryDialog();
+          this.openDoc(it.id);
+        });
+        list.appendChild(row);
+        return;
+      }
       const del = document.createElement("button");
       del.className = "df-fav__del";
       del.textContent = "\u53D6\u6D88\u6536\u85CF";
@@ -858,10 +882,6 @@ module.exports = class DocFavoritesPlugin extends Plugin {
         }, 1200);
       });
       row.append(star, title, nb, del);
-      row.addEventListener("click", () => {
-        this.closeDiaryDialog();
-        this.openDoc(it.id);
-      });
       list.appendChild(row);
     });
   }
