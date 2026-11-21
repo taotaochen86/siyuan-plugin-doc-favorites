@@ -26,7 +26,9 @@
 
 **收藏页**
 
-<img src="assets/window-favorites.png" alt="收藏页：三条收藏，行尾可取消" onerror="this.src='/plugins/siyuan-plugin-doc-favorites/assets/window-favorites.png'">
+<img src="assets/window-favorites.png" alt="收藏页：收藏列表，一行一条" onerror="this.src='/plugins/siyuan-plugin-doc-favorites/assets/window-favorites.png'">
+
+截图为 0.2.8 界面；0.2.9 起「取消收藏」要先点右下「编辑」，才会出现在行尾。
 
 ## 3 它解决了什么问题
 
@@ -225,7 +227,9 @@ Right-click a document to star it; after that, press Ctrl twice inside SiYuan to
 
 **Favorites tab**
 
-<img src="assets/window-favorites.png" alt="Favorites tab: three starred documents with Remove buttons" onerror="this.src='/plugins/siyuan-plugin-doc-favorites/assets/window-favorites.png'">
+<img src="assets/window-favorites.png" alt="Favorites tab: one starred document per row" onerror="this.src='/plugins/siyuan-plugin-doc-favorites/assets/window-favorites.png'">
+
+The screenshot is from 0.2.8; from 0.2.9 the `Remove` button appears only after you click `Edit`.
 
 ## 3 What it solves
 
